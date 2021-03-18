@@ -30,8 +30,21 @@ public class Percolation {
         openSite[i] = true;
         numberOfOpenSites++;
 
-        // TODO: connect to neighbours
+        // connect to top neighbour
+        if (row > 1 && isOpen(col, row - 1))
+            uf.union(i, xyTo1D(col, row - 1));
 
+        // connect to bottom neighbour
+        if (row < gridSize && isOpen(col, row + 1))
+            uf.union(i, xyTo1D(col, row + 1));
+
+        // connect to left neighbour
+        if (col > 1 && isOpen(col - 1, row))
+            uf.union(i, xyTo1D(col - 1, row));
+
+        // connect to right neighbour
+        if (col < gridSize && isOpen(col + 1, row))
+            uf.union(i, xyTo1D(col + 1, row));
     }
 
     // is the site (row, col) open?
@@ -58,27 +71,13 @@ public class Percolation {
         return uf.find(virtualTop()) == uf.find(virtualBottom());
     }
 
-    public static void main(String[] args) throws Exception {
-        Percolation percolation = new Percolation(StdIn.readInt());
-
-        while (!StdIn.isEmpty()) {
-            int row = StdIn.readInt();
-            int col = StdIn.readInt();
-            if (percolation.isOpen(row, col))
-                continue;
-            percolation.open(row, col);
-        }
-
-        StdOut.println(percolation.percolates());
-    }
-
     private void setupVirtualSites() {
         int virtualTop = this.virtualTop();
         int virtualBot = this.virtualBottom();
 
         for (int i = 1; i <= gridSize; i++) {
             int topSite = xyTo1D(i, 1);
-            int botSite = xyTo1D(gridSize, i);
+            int botSite = xyTo1D(i, gridSize);
             uf.union(topSite, virtualTop);
             uf.union(botSite, virtualBot);
         }
@@ -98,7 +97,23 @@ public class Percolation {
 
     private void validate(int row, int col) {
         int p = xyTo1D(col, row);
-        if (p <= 0 || p > gridSize * gridSize)
+        if (p < 0 || p >= gridSize * gridSize)
             throw new IllegalArgumentException("Row and col must be between [1, n]");
+    }
+
+    public static void main(String[] args) throws Exception {
+        Percolation percolation = new Percolation(StdIn.readInt());
+
+        while (!StdIn.isEmpty()) {
+            int row = StdIn.readInt();
+            int col = StdIn.readInt();
+            if (percolation.isOpen(row, col))
+                continue;
+            percolation.open(row, col);
+        }
+
+        StdOut.println(percolation.uf.count());
+        StdOut.println(percolation.percolates());
+
     }
 }
