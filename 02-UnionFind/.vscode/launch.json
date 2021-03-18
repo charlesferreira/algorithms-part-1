@@ -1,0 +1,37 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch Percolation",
+            "request": "launch",
+            "mainClass": "Percolation",
+            "projectName": "02-UnionFind_be03c9b2"
+        },
+        {
+            "type": "java",
+            "name": "Launch QuickFindUF",
+            "request": "launch",
+            "mainClass": "lecture.QuickFindUF",
+            "projectName": "02-UnionFind_be03c9b2",
+            "args": "< src/demo.txt"
+        },
+        {
+            "type": "java",
+            "name": "Launch QuickUnionUF",
+            "request": "launch",
+            "mainClass": "lecture.QuickUnionUF",
+            "projectName": "02-UnionFind_be03c9b2",
+            "args": "< src/demo.txt"
+        }
+    ]
+}
