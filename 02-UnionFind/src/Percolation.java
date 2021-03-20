@@ -10,14 +10,17 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 
-    private int gridSize;
+    private final int n;
+    private final WeightedQuickUnionUF uf;
     private boolean[] openSite;
     private int numberOfOpenSites;
-    private WeightedQuickUnionUF uf;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
-        gridSize = n;
+        if (n <= 0)
+            throw new IllegalArgumentException("n must >= 1");
+
+        this.n = n;
         openSite = new boolean[n * n];
         uf = new WeightedQuickUnionUF(n * n + 2);
         setupVirtualSites();
@@ -26,24 +29,27 @@ public class Percolation {
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
         validate(row, col);
+        if (isOpen(row, col))
+            return;
+
         int i = xyTo1D(col, row);
         openSite[i] = true;
         numberOfOpenSites++;
 
         // connect to top neighbour
-        if (row > 1 && isOpen(col, row - 1))
+        if (row > 1 && isOpen(row - 1, col))
             uf.union(i, xyTo1D(col, row - 1));
 
         // connect to bottom neighbour
-        if (row < gridSize && isOpen(col, row + 1))
+        if (row < n && isOpen(row + 1, col))
             uf.union(i, xyTo1D(col, row + 1));
 
         // connect to left neighbour
-        if (col > 1 && isOpen(col - 1, row))
+        if (col > 1 && isOpen(row, col - 1))
             uf.union(i, xyTo1D(col - 1, row));
 
         // connect to right neighbour
-        if (col < gridSize && isOpen(col + 1, row))
+        if (col < n && isOpen(row, col + 1))
             uf.union(i, xyTo1D(col + 1, row));
     }
 
@@ -58,7 +64,7 @@ public class Percolation {
     public boolean isFull(int row, int col) {
         validate(row, col);
         int i = xyTo1D(col, row);
-        return uf.find(i) == uf.find(virtualTop());
+        return isOpen(row, col) && uf.find(i) == uf.find(virtualTop());
     }
 
     // returns the number of open sites
@@ -75,45 +81,66 @@ public class Percolation {
         int virtualTop = this.virtualTop();
         int virtualBot = this.virtualBottom();
 
-        for (int i = 1; i <= gridSize; i++) {
+        for (int i = 1; i <= n; i++) {
             int topSite = xyTo1D(i, 1);
-            int botSite = xyTo1D(i, gridSize);
+            int botSite = xyTo1D(i, n);
             uf.union(topSite, virtualTop);
             uf.union(botSite, virtualBot);
         }
     }
 
     private int virtualTop() {
-        return gridSize * gridSize;
+        return n * n;
     }
 
     private int virtualBottom() {
-        return gridSize * gridSize + 1;
+        return n * n + 1;
     }
 
     private int xyTo1D(int x, int y) {
-        return (x - 1) + (y - 1) * gridSize;
+        return (x - 1) + (y - 1) * n;
     }
 
     private void validate(int row, int col) {
-        int p = xyTo1D(col, row);
-        if (p < 0 || p >= gridSize * gridSize)
-            throw new IllegalArgumentException("Row and col must be between [1, n]");
+        if (row <= 0 || row > n || col <= 0 || col > n)
+            throw new IllegalArgumentException("row and col values must be between [1, n]");
     }
 
-    public static void main(String[] args) throws Exception {
-        Percolation percolation = new Percolation(StdIn.readInt());
+    public static void main(String[] args) {
+        int n = StdIn.readInt();
+        if (n <= 0)
+            throw new IllegalArgumentException("n must >= 1");
 
-        while (!StdIn.isEmpty()) {
-            int row = StdIn.readInt();
-            int col = StdIn.readInt();
-            if (percolation.isOpen(row, col))
-                continue;
-            percolation.open(row, col);
-        }
+        Percolation percolation = new Percolation(n);
+        // while (!StdIn.isEmpty()) {
+        //     int row = StdIn.readInt();
+        //     int col = StdIn.readInt();
+        //     if (percolation.isOpen(row, col))
+        //         continue;
+        //     percolation.open(row, col);
+        //     percolation.isOpen(row, col);
+        //     percolation.isFull(row, col);
+        // }
 
-        StdOut.println(percolation.uf.count());
+        // StdOut.println(percolation.percolates());
+
         StdOut.println(percolation.percolates());
-
+        StdOut.println(percolation.percolates());
+        StdOut.println(percolation.percolates());
+        StdOut.println(percolation.percolates());
+        StdOut.println(percolation.percolates());
+        percolation.open(1, 3);
+        StdOut.println(percolation.percolates());
+        StdOut.println(percolation.percolates());
+        percolation.open(2, 1);
+        percolation.open(3, 3);
+        StdOut.println(percolation.percolates());
+        percolation.open(3, 2);
+        percolation.open(2, 2);
+        percolation.open(1, 2);
+        StdOut.println(percolation.percolates());
+        // [ xx]
+        // [xx ]
+        // [ xx]
     }
 }
