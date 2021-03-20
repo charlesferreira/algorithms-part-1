@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch PercolationStats",
+            "request": "launch",
+            "mainClass": "PercolationStats",
+            "projectName": "02-UnionFind_be03c9b2"
+        },
+        {
+            "type": "java",
             "name": "Launch ExampleAPI",
             "request": "launch",
             "mainClass": "lecture.ExampleAPI",
